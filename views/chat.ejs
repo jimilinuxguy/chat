@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>Chat</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="styles/index.css">
+        <script src="/scripts/require.js" data-main="/scripts/chat"></script>
+    </head>
+
+    <body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="accordion">
+                    <span class="glyphicon glyphicon-comment"></span> Chat
+                    <div class="btn-group pull-right">
+                        <a type="button" class="btn btn-default btn-xs" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </a>
+                    </div>
+                </div>
+            <div class="panel-collapse" id="collapseOne">
+                <div class="panel-body">
+                    <ul class="chat" data-bind="foreach: messages,">
+                        <li data-bind="css: {'left' : ($parent.isMe(user)), 'right' : (!$parent.isMe(user))}" class="clearfix"><span data-bind="css: {'pull-left' : ($parent.isMe(user)), 'pull-right' : (!$parent.isMe(user))}" class="chat-img">
+                            <img data-bind="attr: { src: $parent.getImg(user)}" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font" data-bind="text: user"></strong> <small data-bind="{'pull-right' : (!$parent.isMe(user)), 'pull-left' : ($parent.isMe(user))}" class="text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>12 mins ago</small>
+                                </div>
+                                <p data-bind="text: message">
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning btn-sm" id="btn-chat">
+                                Send</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <input type="hidden" name="username" id="username" value="<%= session.user.username%>" />
+    <input type="hidden" name="room" id="room" value="server" />
+    </body>
+</html>

@@ -1,0 +1,66 @@
+        var socket = io();
+
+        $(document).ready(function(){
+
+            $('#send').on('click', function(){
+                sendChat();
+            });
+
+            $("#m").keyup(function (e) {
+                if (e.keyCode == 13) {
+                   sendChat();
+                }
+            });
+
+            $(document).on('click','#rooms li a',function(){
+                id = $(this).attr("href");
+                href = id.replace('#','');
+                $('#room').val(href);
+                $('.messages').hide();
+                $(id).show();
+            });
+
+        });
+        
+        socket.on('message', function(data) {
+            $('#'+data.room).append($('<li>').text('<'+data.user+'>:' +data.message));
+        });
+
+        socket.on('actionMessage', function(data) {
+            $('#'+data.room).append($('<li>').text('*** ' + data.user + ' ' + data.message));
+        });
+
+        socket.on('invalidNick', function(data)  {
+            console.log('Invalid nick found');
+            setNick();
+        });
+
+        socket.on('privateMessage', function(data) {
+            console.dir(data);
+            createRoom(data.from);
+            $('#'+data.from).append($('<li>').text('<'+data.from+'>:' +data.message));
+        });
+
+        socket.on('joinNotice', function(data) {
+            $('#nickList').html('');
+            $.each(data.users, function(ikey,value) {
+                $('#nickList').append('<li>'+value+'</li>');
+            });
+        });
+
+        function sendChat() {
+            cmd = $('#m').val();
+            parts = cmd.split(' ');
+            if ( parts[0] == '/join') {
+                if ( typeof(parts[1]) != undefined) {
+                    createRoom(parts[1]);
+                }
+            }
+            socket.emit('message', { message: $('#m').val(), room: $('#room').val() } );
+            $('#m').val('');
+        }
+
+        function createRoom(roomName) {
+            $('#rooms').append("<li><a href='#"+roomName+"'>"+roomName+"</a></li>");
+            $('body').append("<ul id='"+roomName+"' class='messages'></ul>");
+        }
