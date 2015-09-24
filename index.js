@@ -15,8 +15,8 @@
 	app.use(bodyParser.urlencoded({ extended: false }));
 	app.use(cookieParser('suckit roger'));
 	app.use(session());
-	app.use('/scripts', express.static('views/scripts'));
-	app.use('/styles', express.static('views/styles'));
+	app.use('/scripts', express.static('assets/scripts'));
+	app.use('/styles', express.static('assets/styles'));
 
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'ejs');
