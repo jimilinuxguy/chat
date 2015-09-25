@@ -51,7 +51,8 @@
         </div>
     </div>
 </div>
-    <input type="hidden" name="username" id="username" value="<%= session.user.username%>" />
+    <input type="hidden" name="username" id="username" value="<%= user.username %>" />
+    <input type="hidden" name="photoUrl" id="photoUrl" value="<%= user.photo %>" />
     <input type="hidden" name="room" id="room" value="server" />
     </body>
 </html>

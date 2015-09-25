@@ -13,7 +13,7 @@ requirejs(['./common'], function (common) {
             },
             getImg : function(nick) {
                 if (nick == $('#username').val() ) {
-                    return "http://placehold.it/50/FA6F57/fff&text=ME";
+                    return $('#photoUrl').val();
                 } else {
                     nick = nick.substring(0,2);
                     return "http://placehold.it/50/55C1E7/fff&text=" + nick;

@@ -1,4 +1,4 @@
-module.exports.router = function(app,express,auth) {
+module.exports.router = function(app,express,auth,passport) {
     app.use('/scripts', express.static('assets/scripts'));
     app.use('/styles', express.static('assets/styles'));
 
@@ -25,18 +25,15 @@ module.exports.router = function(app,express,auth) {
         }
     });
 
-    app.get('/chat', function(req,res) {
-        if (!req.session.user) {
-            console.dir(res);
-            res.redirect('/login');
-        }
-        res.render('chat');
+    app.get('/chat', isLoggedIn, function(req,res) {
+        console.dir(req.user);
+        res.render('chat', {user : req.user});
     });
 
     app.get("/login", function (req, res) {
         res.render("login");
     });
-
+    /*
     app.get("/signup", function (req, res) {
         if (req.session.user) {
             res.redirect("/");
@@ -44,6 +41,7 @@ module.exports.router = function(app,express,auth) {
             res.render("signup");
         }
     });
+*/
 
     app.get('/logout', function (req, res) {
         req.session.destroy(function () {
@@ -96,4 +94,58 @@ module.exports.router = function(app,express,auth) {
             });
         });
     }); 
+
+    // route for facebook authentication and login
+    // different scopes while logging in
+    app.get('/login/facebook', 
+      passport.authenticate('facebook', { scope : 'email' }
+    ));
+     
+    // handle the callback after facebook has authenticated the user
+    app.get('/login/facebook/callback',
+      passport.authenticate('facebook', {
+        successRedirect : '/chat',
+        failureRedirect : '/'
+      })
+    );
+
+    app.get('/login/twitter', passport.authenticate('twitter'));
+
+    // handle the callback after twitter has authenticated the user
+    app.get('/login/twitter/callback',
+        passport.authenticate('twitter', {
+            successRedirect : '/chat',
+            failureRedirect : '/'
+        }));
+
+app.get('/login/instagram',
+  passport.authenticate('instagram'));
+
+app.get('/login/instagram/callback', 
+  passport.authenticate('instagram', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/chat');
+  });
+    app.use(function(req, res, next) {
+        res.status(404).render('404');
+    });
+
+
+    app.use(function(err, req, res, next) {
+      console.error(err.stack);
+      res.status(500).send('Something broke!');
+    });
+
+        // route middleware to make sure a user is logged in
+    function isLoggedIn(req, res, next) {
+
+        // if user is authenticated in the session, carry on
+        if (req.isAuthenticated())
+            return next();
+
+        // if they aren't redirect them to the home page
+        res.redirect('/');
+    }
+
 }
